@@ -24,6 +24,7 @@ If you encounter any problems here, try updating UTM and rebooting the computer.
 - You can check if your installation was successful by testing one of the examples in the p4-guide directory.
     ```bash
     $ cd tutorials/exercises/basic/
+    $ cp solution/* .
     $ make run
     ```
     Here you should see a Mininet terminal showing and you can test p4 using 
@@ -53,7 +54,9 @@ If you encounter any problems here, try updating UTM and rebooting the computer.
     mininet> 
     ```
 
-## Running the starter project
+
+
+## Running the starter project with P4
 - Now you can clone the switch-cache repo 
     ```bash
     $ cd ~/
@@ -121,50 +124,3 @@ If you encounter any problems here, try updating UTM and rebooting the computer.
     mininet> h2 ./client.py 10.0.1.1 11
     NOTFOUND
     ```
-
-## Populating tables on the switches during runtime with P4Runtime
-You may need to add entries to your P4 tables after running the network. For instance, in the cache project, you need to have a table that stores some cached key-value pairs and can be updated during runtime. To do this, you can use the `mycontroller.py` provided in this directory. 
-
-**NOTE** You must fill the parts marked with 'TODO' in `mycontroller.py` (in lines 9,43,77) before using it! 
-
-An example:
-```bash
-mininet> h1 ./server.py 1=123 &
-mininet> h2 ./client.py 10.0.1.1 1
-123
-mininet> h2 ./client.py 10.0.1.1 100
-NOTFOUND
-```
-
-Now open another terminal and run `mycontroller.py`:
-```bash
-$ ./mycontroller.py 
-Installed P4 Program using SetForwardingPipelineConfig on s1
-Installed cache rule on s1
-
------ Reading tables rules for s1 -----
-table_id: 48142472
-match {
-  field_id: 1
-  exact {
-    value: "d"
-  }
-}
-action {
-  action {
-    action_id: 22586559
-    params {
-      param_id: 1
-      value: "\032"
-    }
-  }
-}
-
------
-```
-
-Go back to the miniet CLI and check for the new value again:
-```bash
-mininet> h2 ./client.py 10.0.1.1 100
-26
-```
