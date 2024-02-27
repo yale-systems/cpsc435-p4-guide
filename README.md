@@ -55,6 +55,61 @@ If you encounter any problems here, try updating UTM and rebooting the computer.
     ```
 
 
+## Running Projects with p4app
+You can use the following steps to utilize p4app inside the VM. However, please note that this may **not** be the most efficient or straightforward method to utilize p4app. Feel free to adjust the scripts as needed for your project directory structure.
+
+First, begin by cloning the p4app repository:
+```bash
+$ cd ~/
+$ git clone https://github.com/p4lang/p4app.git --branch rc-2.0.0 --recursive
+$ cd p4app/docker/scripts
+```
+
+Next, create the `/p4app/` and `/tmp/p4app-logs` directories which will be utilized by p4app scripts.
+```bash
+$ sudo mkdir /p4app/
+$ mkdir /tmp/p4app-logs
+```
+
+Since p4app scripts require sudo permissions and p4setup.bash sourcing, we create a script to simplify this process. Remember to replace YOUR_USERNAME with your actual username!
+```bash
+$ touch run.sh
+$ echo 'source /home/YOUR_USERNAME/p4-build/p4setup.bash
+python3 p4apprunner.py' > run.sh 
+$ chmod +x run.sh
+```
+
+Now, let's run an example. To execute a project, we need to copy all of its contents into the `/p4app` directory.
+```bash
+$ sudo cp ../../examples/basic.p4app/* /p4app/
+```
+
+Finally, we need to modify the `main.py` of the project and add the following lines to the **beginning** of the file:
+```bash
+import sys
+sys.path.append("/home/YOUR_USERNAME/p4app/docker/scripts")
+```
+
+Your project is now set up and ready to run! You can execute it using the following command.
+```bash
+$ sudo -s ./run.sh 
+
+> python /p4app/main.py 
+> p4c-bm2-ss --std p4-16 "/p4app/basic.p4" -o "/tmp/p4app-logs/basic.json" --p4runtime-files "/tmp/p4app-logs/basic.p4info.txt"
+[--Wwarn=deprecated] warning: .txt format is being deprecated; use .txtpb instead
+
+----- Reading tables rules for s1 -----
+MyIngress.ipv4_lpm:  hdr.ipv4.dstAddr (b'\n\x00\x00\x01', 32) -> MyIngress.ipv4_forward dstAddr b'>\x0eK\x8d\xb2\xff' port b'\x01' 
+MyIngress.ipv4_lpm:  hdr.ipv4.dstAddr (b'\n\x00\x00\x02', 32) -> MyIngress.ipv4_forward dstAddr b'fhn.\xb2&' port b'\x02' 
+*** Ping: testing ping reachability
+h1 -> h2 
+h2 -> h1 
+*** Results: 0% dropped (2/2 received)
+
+----- Reading tables rules for s1 -----
+OK
+```
+
 
 ## Running the starter project with P4
 - Now you can clone the switch-cache repo 
