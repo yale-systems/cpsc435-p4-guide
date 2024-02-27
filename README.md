@@ -70,6 +70,7 @@ Next, create the `/p4app/` and `/tmp/p4app-logs` directories which will be utili
 $ sudo mkdir /p4app/
 $ mkdir /tmp/p4app-logs
 ```
+Note that `/tmp/p4app-logs` directory will be removed if you reboot the VM. You have to recreate it after each reboot.
 
 Since p4app scripts require sudo permissions and p4setup.bash sourcing, we create a script to simplify this process. Remember to replace YOUR_USERNAME with your actual username!
 ```bash
